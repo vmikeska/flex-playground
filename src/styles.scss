@@ -1,1 +1,51 @@
-/* You can add global styles to this file, and also import other style files */
+
+.container {
+    // display: flex;
+    border: 1px solid red;    
+    height: 400px;
+
+    // flex-direction: row;
+}
+
+.item {
+    border: 1px solid blue;
+    height: 380px;
+
+    width: 200px;
+
+    &.active {
+        border-width: 3px;
+    }
+}
+
+.item-styles {
+    border: 2px solid black;
+
+    .table {
+        display: table;
+
+        .row {
+            display: table-row;
+
+            .col {
+                display: table-cell;
+            }
+        }
+    }
+}
+
+.container-styles {
+    border: 2px solid black;
+
+    .table {
+        display: table;
+
+        .row {
+            display: table-row;
+
+            .col {
+                display: table-cell;
+            }
+        }
+    }
+}
