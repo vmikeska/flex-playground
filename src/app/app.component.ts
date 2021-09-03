@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { maxBy } from 'lodash-es';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -91,15 +91,35 @@ export class AppComponent implements OnInit {
 
     let item: FlexItem = {
       no: nextNo,
-      color: '',
-      styles: this.initItemStyles()
+      styles: this.initItemStyles(nextNo),
+      builtStyles: new BehaviorSubject<string>('')
     };
+
+    item.styles.forEach((s) => {
+      s.selectedChange.subscribe(() => {
+        let styles = this.buildStyles(item.styles);
+        item.builtStyles.next(styles);
+      });
+
+      s.valueChange.subscribe(() => {
+        let styles = this.buildStyles(item.styles);
+        item.builtStyles.next(styles);
+      });
+    })
+
+    let styles = this.buildStyles(item.styles);
+    item.builtStyles.next(styles);
+
     this.items.push(item);
+
+
   }
 
-  private initItemStyles() {
+  private initItemStyles(no: number) {
 
-    let styles = this.itemOptions.map((option) => {
+    let opts = this.getItemOptions(no);
+
+    let styles = opts.map((option) => {
       let s = new ItemStyle();
       s.option = option;
       s.selected = option.defaultSelected;
@@ -130,22 +150,171 @@ export class AppComponent implements OnInit {
         'column',
         'column-reverse'
       ]
-    }
+    },
+    {
+      name: 'flex-wrap',
+      defaultValue: 'nowrap',
+      defaultSelected: true,
+      options: [
+        'nowrap',
+        'wrap',
+        'wrap-reverse'        
+      ]
+    },
+    {
+      name: 'justify-content',
+      defaultValue: 'flex-start',
+      defaultSelected: true,
+      options: [
+        'flex-start',
+        'flex-end',
+        'center',
+        'space-between',
+        'space-around',
+        'space-evenly',
+        'start',
+        'end',
+        'left',
+        'right',
+
+        'flex-start safe',
+        'flex-end safe',
+        'center safe',
+        'space-between safe',
+        'space-around safe',
+        'space-evenly safe',
+        'start safe',
+        'end safe',
+        'left safe',
+        'right safe',
+
+        'flex-start unsafe',
+        'flex-end unsafe',
+        'center unsafe',
+        'space-between unsafe',
+        'space-around unsafe',
+        'space-evenly unsafe',
+        'start unsafe',
+        'end unsafe',
+        'left unsafe',
+        'right unsafe'
+      ]
+    },
+    {
+      name: 'align-items',
+      defaultValue: 'stretch',
+      defaultSelected: true,
+      options: [
+        'stretch',
+        'flex-start',
+        'flex-end',
+        'center',
+        'baseline', 
+        'first baseline', 
+        'last baseline',
+        'start',
+        'end',                   
+        'self-start',
+        'self-end'
+      ]
+    },
+    {
+      name: 'align-content',
+      defaultValue: 'normal',
+      defaultSelected: true,
+      options: [
+        'normal',
+        'flex-start',
+        'flex-end',
+        'center',
+        'space-between',
+        'space-around', 
+        'space-evenly', 
+        'stretch', 
+        'start', 
+        'end', 
+        'baseline', 
+        'first baseline', 
+        'last baseline'
+      ]
+    },
+
+    //todo: check on options alternative sources
+
+
+    //todo: what to do with flex flow ?
 
   ];
 
-  private itemOptions: ItemOption[] = [
-    // {
-    //   name: 'flex-direction',
-    //   options: [
-    //     'row',
-    //     'row-reverse',
-    //     'column',
-    //     'column-reverse'
-    //   ]
-    // }
+  private getItemOptions(no: number) {
 
-  ];
+    let itemOptions: ItemOption[] = [
+      {
+        name: 'background-color',
+        defaultValue: this.colors[no - 1],
+        options: this.colors,
+        defaultSelected: true
+      },
+      {
+        name: 'order',
+        defaultValue: null,
+        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ],
+        defaultSelected: false
+      },
+      {
+        name: 'flex-grow',
+        defaultValue: null,
+        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ],
+        defaultSelected: false
+      },
+      {
+        name: 'flex-shrink',
+        defaultValue: null,
+        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ],
+        defaultSelected: false
+      },
+      {
+        name: 'flex-basis',
+        defaultValue: null,
+        options: ['auto'], //todo: custom values
+        defaultSelected: false
+      },
+      //todo: FLEX shorthand
+      {
+        name: 'align-self',
+        defaultValue: null,
+        options: ['auto', 'flex-start', 'flex-end', 'center', 'baseline', 'stretch'], 
+        defaultSelected: false
+      },
+
+
+      
+
+
+      
+
+      
+
+    ];
+
+    return itemOptions;
+  }
+
+
+
+  private colors = [
+    'darkblue',
+    'darkcyan',
+    'darkgreen',
+    'darkmagenta',
+    'darkolivegreen',
+    'darkorange',
+    'darkorchid',
+    'darkred',
+    'darkseagreen',
+    'darkslateblue',
+    'darkslategray'
+  ]
 
 }
 
@@ -186,7 +355,7 @@ export interface ItemOption {
 
 export interface FlexItem {
   no: number;
-  color: string;
   styles: ItemStyle[];
+  builtStyles: BehaviorSubject<string>;
 }
 
