@@ -108,7 +108,27 @@ export class ContainerOptions {
             'first baseline', 
             'last baseline'
           ]
+        },        
+        {
+          name: 'widht',
+          defaultValue: '',
+          defaultSelected: false,
+          options: [
+            'auto'            
+          ],
+          customValue: true,
+          defaultCustomValue: ''
         },
+        {
+          name: 'height',
+          defaultValue: '',
+          defaultSelected: false,
+          options: [
+            'auto'            
+          ],
+          customValue: true,
+          defaultCustomValue: ''
+        }
     
         //todo: check on options alternative sources
     

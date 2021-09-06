@@ -62,14 +62,6 @@ export class AppComponent implements OnInit {
     this.activeItem = this.items[0];
   }
 
-  public allOptions(o: ItemOption) {
-    if (o.customValue) {
-      return ['custom'].concat(o.options);
-    }
-
-    return o.options;
-  }
-
   private initContainer() {
     this.containerStyles = ContainerOptions.containerOptions.map((option) => {
 
@@ -96,7 +88,7 @@ export class AppComponent implements OnInit {
         if (!s.selected) {
           s.selected = true;
         }
-        
+
         this.containerStyleChange.next();
       });
 
