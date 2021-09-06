@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { maxBy } from 'lodash-es';
+import { maxBy, pull } from 'lodash-es';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { ContainerOptions } from './container-options';
+import { FlexItem, ItemOption, ItemStyle } from './ints';
+import { ItemsOptions } from './item-options';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +32,8 @@ export class AppComponent implements OnInit {
 
     items.forEach((i) => {
       if (i.selected) {
-        let itemStr = `${i.option.name}: ${i.value}; `;
+        let v = i.isCustom ? i.customValue : i.value;
+        let itemStr = `${i.option.name}: ${v}; `;
         str += itemStr;
       }
     });
@@ -58,8 +62,16 @@ export class AppComponent implements OnInit {
     this.activeItem = this.items[0];
   }
 
+  public allOptions(o: ItemOption) {
+    if (o.customValue) {
+      return ['custom'].concat(o.options);
+    }
+
+    return o.options;
+  }
+
   private initContainer() {
-    this.containerStyles = this.containerOptions.map((option) => {
+    this.containerStyles = ContainerOptions.containerOptions.map((option) => {
 
       let s = new ItemStyle();
       s.option = option;
@@ -73,6 +85,18 @@ export class AppComponent implements OnInit {
       });
 
       s.valueChange.subscribe(() => {
+        if (!s.selected) {
+          s.selected = true;
+        }
+
+        this.containerStyleChange.next();
+      });
+
+      s.customValueChange.subscribe(() => {
+        if (!s.selected) {
+          s.selected = true;
+        }
+        
         this.containerStyleChange.next();
       });
 
@@ -102,7 +126,20 @@ export class AppComponent implements OnInit {
       });
 
       s.valueChange.subscribe(() => {
+        if (!s.selected) {
+          s.selected = true;
+        }
+
         let styles = this.buildStyles(item.styles);
+        item.builtStyles.next(styles);
+      });
+
+      s.customValueChange.subscribe(() => {
+        if (!s.selected) {
+          s.selected = true;
+        }
+
+        let styles = this.buildStyles(item.styles);        
         item.builtStyles.next(styles);
       });
     })
@@ -111,251 +148,35 @@ export class AppComponent implements OnInit {
     item.builtStyles.next(styles);
 
     this.items.push(item);
+  }
 
+  public addItemClick() {
+    this.initItem();
+  }
 
+  public removeActiveItemClick() {
+    pull(this.items, this.activeItem);
+    this.activeItem = null;
   }
 
   private initItemStyles(no: number) {
 
-    let opts = this.getItemOptions(no);
+    let opts = ItemsOptions.getItemOptions(no);
 
     let styles = opts.map((option) => {
       let s = new ItemStyle();
       s.option = option;
       s.selected = option.defaultSelected;
       s.value = option.defaultValue;
+      s.customValue = option.defaultCustomValue;
 
       return s;
     });
     return styles;
   }
 
-  private containerOptions: ItemOption[] = [
-    {
-      name: 'display',
-      defaultValue: 'flex',
-      defaultSelected: true,
-      options: [
-        'flex',
-        'inline-flex'
-      ]
-    },
-    {
-      name: 'flex-direction',
-      defaultValue: 'row',
-      defaultSelected: true,
-      options: [
-        'row',
-        'row-reverse',
-        'column',
-        'column-reverse'
-      ]
-    },
-    {
-      name: 'flex-wrap',
-      defaultValue: 'nowrap',
-      defaultSelected: true,
-      options: [
-        'nowrap',
-        'wrap',
-        'wrap-reverse'        
-      ]
-    },
-    {
-      name: 'justify-content',
-      defaultValue: 'flex-start',
-      defaultSelected: true,
-      options: [
-        'flex-start',
-        'flex-end',
-        'center',
-        'space-between',
-        'space-around',
-        'space-evenly',
-        'start',
-        'end',
-        'left',
-        'right',
-
-        'flex-start safe',
-        'flex-end safe',
-        'center safe',
-        'space-between safe',
-        'space-around safe',
-        'space-evenly safe',
-        'start safe',
-        'end safe',
-        'left safe',
-        'right safe',
-
-        'flex-start unsafe',
-        'flex-end unsafe',
-        'center unsafe',
-        'space-between unsafe',
-        'space-around unsafe',
-        'space-evenly unsafe',
-        'start unsafe',
-        'end unsafe',
-        'left unsafe',
-        'right unsafe'
-      ]
-    },
-    {
-      name: 'align-items',
-      defaultValue: 'stretch',
-      defaultSelected: true,
-      options: [
-        'stretch',
-        'flex-start',
-        'flex-end',
-        'center',
-        'baseline', 
-        'first baseline', 
-        'last baseline',
-        'start',
-        'end',                   
-        'self-start',
-        'self-end'
-      ]
-    },
-    {
-      name: 'align-content',
-      defaultValue: 'normal',
-      defaultSelected: true,
-      options: [
-        'normal',
-        'flex-start',
-        'flex-end',
-        'center',
-        'space-between',
-        'space-around', 
-        'space-evenly', 
-        'stretch', 
-        'start', 
-        'end', 
-        'baseline', 
-        'first baseline', 
-        'last baseline'
-      ]
-    },
-
-    //todo: check on options alternative sources
-
-
-    //todo: what to do with flex flow ?
-
-  ];
-
-  private getItemOptions(no: number) {
-
-    let itemOptions: ItemOption[] = [
-      {
-        name: 'background-color',
-        defaultValue: this.colors[no - 1],
-        options: this.colors,
-        defaultSelected: true
-      },
-      {
-        name: 'order',
-        defaultValue: null,
-        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ],
-        defaultSelected: false
-      },
-      {
-        name: 'flex-grow',
-        defaultValue: null,
-        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ],
-        defaultSelected: false
-      },
-      {
-        name: 'flex-shrink',
-        defaultValue: null,
-        options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ],
-        defaultSelected: false
-      },
-      {
-        name: 'flex-basis',
-        defaultValue: null,
-        options: ['auto'], //todo: custom values
-        defaultSelected: false
-      },
-      //todo: FLEX shorthand
-      {
-        name: 'align-self',
-        defaultValue: null,
-        options: ['auto', 'flex-start', 'flex-end', 'center', 'baseline', 'stretch'], 
-        defaultSelected: false
-      },
-
-
-      
-
-
-      
-
-      
-
-    ];
-
-    return itemOptions;
-  }
-
-
-
-  private colors = [
-    'darkblue',
-    'darkcyan',
-    'darkgreen',
-    'darkmagenta',
-    'darkolivegreen',
-    'darkorange',
-    'darkorchid',
-    'darkred',
-    'darkseagreen',
-    'darkslateblue',
-    'darkslategray'
-  ]
-
 }
 
-export class ItemStyle {
-  public option: ItemOption;
+  
 
-  public valueChange = new Subject<string>();
-  public selectedChange = new Subject<boolean>();
-
-  private _value: string;
-  public get value() {
-    return this._value;
-  }
-  public set value(v: string) {
-    this._value = v;
-    this.valueChange.next();
-  }
-
-  private _selected: boolean;
-  public get selected() {
-    return this._selected;
-  }
-  public set selected(v: boolean) {
-    this._selected = v;
-    this.selectedChange.next();
-  }
-
-}
-
-
-
-export interface ItemOption {
-  name: string;
-  options: string[];
-  defaultValue?: string;
-  defaultSelected?: boolean;
-}
-
-export interface FlexItem {
-  no: number;
-  styles: ItemStyle[];
-  builtStyles: BehaviorSubject<string>;
-}
 

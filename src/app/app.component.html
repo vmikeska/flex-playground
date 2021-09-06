@@ -13,66 +13,96 @@
 
 </div>
 
+<div class="action-panel">
 
-<div class="container-styles">
-
-  <div class="table">
-    <div
-      *ngFor="let item of containerStyles"
-      class="row"
-    >
-      <div class="col">
-        <input
-          type="checkbox"
-          [(ngModel)]="item.selected"
-        >
-      </div>
-      <div class="col">{{item.option.name}}</div>
-      <div class="col">
-
-        <select [(ngModel)]="item.value">
-          <option
-            *ngFor="let style of item.option.options"
-            [value]="style"
-          >{{style}}</option>
-        </select>
-
-      </div>
-    </div>
-  </div>
+  <span
+    class="btn"
+    (click)="addItemClick()"
+  >Add item</span>
+  <span
+    class="btn"
+    (click)="removeActiveItemClick()"
+  >Remove active item</span>
 
 </div>
 
+<div class="styles-layout">
+  <div class="l">
+    <div class="title">Container styles</div>
+    <div class="content">
+      <div class="container-styles">
 
-<div
-  *ngIf="activeItem "
-  class="item-styles"
->
+        <div class="table">
+          <div
+            *ngFor="let item of containerStyles"
+            class="row"
+          >
+            <div class="col">
+              <input
+                type="checkbox"
+                [(ngModel)]="item.selected"
+              >
+            </div>
+            <div class="col">{{item.option.name}}</div>
+            <div class="col">
 
-  <div class="table">
-    <div
-      *ngFor="let item of activeItem.styles"
-      class="row"
-    >
-      <div class="col">
-        <input
-          type="checkbox"
-          [(ngModel)]="item.selected"
-        >
+              <select [(ngModel)]="item.value">
+                <option
+                  *ngFor="let style of allOptions(item.option)"
+                  [value]="style"
+                >{{style}}</option>
+              </select>
+
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="col">{{item.option.name}}</div>
-      <div class="col">
 
-        <select [(ngModel)]="item.value">
-          <option
-            *ngFor="let style of item.option.options"
-            [value]="style"
-          >{{style}}</option>
-        </select>
+    </div>
+  </div>
+  <div class="r">
+    <div class="title">Active item styles</div>
+    <div class="content">
+      <div
+        *ngIf="activeItem "
+        class="item-styles"
+      >
 
+        <div class="table">
+          <div
+            *ngFor="let item of activeItem.styles"
+            class="row"
+          >
+            <div class="col">
+              <input
+                type="checkbox"
+                [(ngModel)]="item.selected"
+              >
+            </div>
+            <div class="col">{{item.option.name}}</div>
+            <div class="col">
+
+              <select [(ngModel)]="item.value">
+                <option
+                  *ngFor="let style of allOptions(item.option)"
+                  [value]="style"
+                >{{style}}</option>
+              </select>
+
+            </div>
+            <div class="col">
+
+              <input
+                *ngIf="item.isCustom"
+                [(ngModel)]="item.customValue"
+              />
+
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>
   </div>
-
 </div>

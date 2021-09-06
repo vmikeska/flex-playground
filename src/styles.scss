@@ -1,25 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+}
 
 .container {
-
-    border: 1px solid red;    
-    
-
-
+    border: 1px solid black;
 }
 
 .item {
-    border: 1px solid blue;
-    height: 400px;
+    box-sizing: border-box;
 
-    width: 200px;
-
-    &.active {
-        border-width: 3px;
+    &.active {        
+        border: 2px solid red;
     }
 }
 
+.action-panel {
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    .btn {
+        margin-right: 10px;
+    }
+}
+
+.btn {
+    border: 2px solid darkblue;
+    padding: 10px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
 .item-styles {
-    border: 2px solid black;
+    
 
     .table {
         display: table;
@@ -35,7 +48,7 @@
 }
 
 .container-styles {
-    border: 2px solid black;
+    
 
     .table {
         display: table;
@@ -47,5 +60,22 @@
                 display: table-cell;
             }
         }
+    }
+}
+
+.styles-layout {
+    display: table;
+    width: 100%;
+
+    .title {
+        font-weight: bold;
+        font-size: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .l,
+    .r {
+        display: table-cell;
     }
 }
