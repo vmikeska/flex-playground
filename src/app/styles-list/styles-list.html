@@ -5,14 +5,14 @@
             *ngFor="let item of styles"
             class="row"
         >
-            <div class="col">
+            <div class="col check-col">
                 <input
                     type="checkbox"
                     [(ngModel)]="item.selected"
                 >
             </div>
-            <div class="col">{{item.option.name}}</div>
-            <div class="col">
+            <div class="col name-col">{{item.option.name}}</div>
+            <div class="col combo-col">
 
                 <select [(ngModel)]="item.value">
                     <option
@@ -22,7 +22,7 @@
                 </select>
 
             </div>
-            <div class="col">
+            <div class="col custom-col">
 
                 <input
                     *ngIf="item.isCustom"

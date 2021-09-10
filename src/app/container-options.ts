@@ -110,7 +110,7 @@ export class ContainerOptions {
           ]
         },        
         {
-          name: 'widht',
+          name: 'width',
           defaultValue: '',
           defaultSelected: false,
           options: [

@@ -6,7 +6,7 @@ export class ItemsOptions {
         let itemOptions: ItemOption[] = [
             {
                 name: 'background-color',
-                defaultValue: this.colors[no - 1],
+                defaultValue: this.getColor(no),
                 options: this.colors,
                 defaultSelected: true
             },
@@ -62,6 +62,21 @@ export class ItemsOptions {
         ];
 
         return itemOptions;
+    }
+
+    public static getColor(no: number) {
+
+        if (no <= this.colors.length) {
+            return this.colors[no - 1];
+        }
+
+        let realNo = no;
+
+        while (realNo >= 10) {
+            realNo = realNo - 10;
+        }
+
+        return this.colors[realNo];
     }
 
 

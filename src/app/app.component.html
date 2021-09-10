@@ -1,28 +1,16 @@
-<div
-  [style]="containerStylesString"
-  class="container"
->
+<div [style]="containerStylesString" class="container">
 
-  <div
-    *ngFor="let item of items"
-    [ngClass]="{'active': item === activeItem}"
-    [style]="item.builtStyles | async"
-    class="item item-{{item.no}}"
-    (click)="itemClick(item)"
-  ></div>
+  <div *ngFor="let item of items" [ngClass]="{'active': item === activeItem}" [style]="item.builtStyles | async"
+    class="item item-{{item.no}}" (click)="itemClick(item)"></div>
 
 </div>
 
 <div class="action-panel">
 
-  <span
-    class="btn"
-    (click)="addItemClick()"
-  >Add item</span>
-  <span
-    class="btn"
-    (click)="removeActiveItemClick()"
-  >Remove active item</span>
+  <span class="btn" (click)="addItemClick()">Add default item</span>
+  <span class="btn" [ngClass]="{'disabled': !activeItem}" (click)="removeActiveItemClick()">Remove active item</span>
+  <span class="btn" [ngClass]="{'disabled': !activeItem}" (click)="cloneActiveItemClick()">Clone active item</span>
+  <span class="btn" (click)="showCssClick()">Show current CSS</span>
 
 </div>
 
@@ -39,11 +27,18 @@
     <div class="title">Active item styles</div>
     <div class="content">
 
-      <app-styles-list
-        *ngIf="activeItem"
-        [styles]="activeItem.styles"
-      ></app-styles-list>
+      <app-styles-list *ngIf="activeItem" [styles]="activeItem.styles"></app-styles-list>
 
     </div>
   </div>
 </div>
+
+<div *ngIf="showCss" class="css-cont-all">
+  <div class="bar">
+    <span class="cross" (click)="cssCloseClick()">X</span>
+  </div>
+  <pre class="css-cont">{{allStylesCurrent}}</pre>
+
+</div>
+
+
